@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import { PokemonList } from './PokemonList';
 import { AppState } from './interfaces/AppState';
+import Loading from './Loading';
 
 const API_SEARCH = 'https://pokeapi.co/api/v2/pokemon/'; // POKEMON
 
@@ -12,6 +13,7 @@ class App extends React.Component<object, AppState> {
       searchTerm: '',
       results: null,
       error: null,
+      isLoading: false,
     };
   }
 
@@ -30,22 +32,25 @@ class App extends React.Component<object, AppState> {
   };
 
   searchResults = async (term: string): Promise<void> => {
+    this.setState({ isLoading: true });
     try {
       const response = await fetch(`${API_SEARCH}${term}`);
       if (response.status === 404) {
         this.setState({
           error: 'Failed to search results. Please try again later.',
           results: null,
+          isLoading: false,
         });
         return;
       }
       const data = await response.json();
-      this.setState({ results: data, error: null });
+      this.setState({ results: data, error: null, isLoading: false });
       localStorage.setItem('searchTerm', term);
     } catch (err) {
       this.setState({
         error: 'Failed to search results. Please try again later.',
         results: null,
+        isLoading: false,
       });
     }
   };
@@ -55,7 +60,7 @@ class App extends React.Component<object, AppState> {
   };
 
   render(): JSX.Element {
-    const { searchTerm, results, error } = this.state;
+    const { searchTerm, results, error, isLoading } = this.state;
 
     return (
       <div className="app">
@@ -71,7 +76,9 @@ class App extends React.Component<object, AppState> {
           <button onClick={this.triggerError}>Trigger Error</button>
         </div>
         <div className="bottom-section">
-          {error ? (
+          {isLoading ? (
+            <Loading />
+          ) : error ? (
             <div className="error">{error}</div>
           ) : results ? (
             <div key={results.name} className="result">
