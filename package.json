@@ -8,9 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,md}'",
-    "prepare": "husky install",
+    "prepare": "husky",
     "preview": "vite preview",
-    "test": "echo 'Husky is working' && npm run lint && npm run format:fix"
+    "test": "echo 'Husky is working' && npm run lint && npm run format:fix",
+    "postinstall": "npm run prepare && npx husky init"
   },
   "dependencies": {
     "react": "^18.3.1",
