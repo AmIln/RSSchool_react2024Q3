@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { PokemonList } from './PokemonList';
+import { PokemonList } from './pokemonList/PokemonList';
 import { AppState } from './interfaces/AppState';
 import SearchInput from './search/SearchInput';
 import SearchResults from './search/SearchResults';
