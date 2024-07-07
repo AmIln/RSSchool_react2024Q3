@@ -1,5 +1,5 @@
 import React from 'react';
-import { Result } from './interfaces/Result';
+import { Result } from '../interfaces/Result';
 
 const API_URL = 'https://pokeapi.co/api/v2/pokemon?limit=99&offset=0'; // ALL POKEMONS
 
