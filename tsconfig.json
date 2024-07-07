@@ -6,7 +6,11 @@
     "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "outDir": "./dist"
   },
   "include": ["src"],
   "files": [],
