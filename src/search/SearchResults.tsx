@@ -4,7 +4,7 @@ import { Result } from '../interfaces/Result';
 
 interface SearchResultsProps {
   results: Result | null;
-  error: string | null;
+  error: boolean;
   isLoading: boolean;
 }
 
