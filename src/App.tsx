@@ -1,10 +1,12 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import './App.css';
 import { PokemonList } from './pokemonList/PokemonList';
 import { AppState } from './interfaces/AppState';
 import SearchInput from './search/SearchInput';
 import SearchResults from './search/SearchResults';
-import { handleSearch, triggerError } from './search/searchFunctions';
+import { handleSearch } from './search/searchFunctions';
+import ErrorPage from './ErrorPage/ErrorPage';
 
 class App extends React.Component<object, AppState> {
   constructor(props: object) {
@@ -12,7 +14,7 @@ class App extends React.Component<object, AppState> {
     this.state = {
       searchTerm: '',
       results: null,
-      error: null,
+      error: false,
       isLoading: false,
     };
   }
@@ -28,10 +30,13 @@ class App extends React.Component<object, AppState> {
 
   searchResults = async (term: string): Promise<void> => {
     this.setState({ isLoading: true });
-    const { results, error } = await handleSearch(term);
-    this.setState({ results, error, isLoading: false });
-    if (!error) {
+    try {
+      const { results } = await handleSearch(term);
+      this.setState({ results, error: false, isLoading: false });
       localStorage.setItem('searchTerm', term);
+    } catch (error) {
+      console.error('Error in searchResults:', error);
+      this.setState({ error: true, isLoading: false });
     }
   };
 
@@ -41,26 +46,46 @@ class App extends React.Component<object, AppState> {
   };
 
   handleTriggerError = (): void => {
-    const error = triggerError();
-    this.setState({ error });
+    try {
+      throw new Error('Triggered error');
+    } catch (error) {
+      console.error('Triggered error:', error);
+      this.setState({ error: true });
+    }
   };
 
   render(): JSX.Element {
     const { searchTerm, results, error, isLoading } = this.state;
 
     return (
-      <div className="app">
-        <SearchInput
-          searchTerm={searchTerm}
-          onSearchTermChange={(term) => this.setState({ searchTerm: term })}
-          onSearch={this.handleSearch}
-        />
-        <button className="error-trigger" onClick={this.handleTriggerError}>
-          Trigger Error
-        </button>
-        <SearchResults results={results} error={error} isLoading={isLoading} />
-        <PokemonList />
-      </div>
+      <ErrorBoundary fallbackRender={() => <ErrorPage></ErrorPage>}>
+        {!error && (
+          <>
+            <div className="app">
+              <SearchInput
+                searchTerm={searchTerm}
+                onSearchTermChange={(term) =>
+                  this.setState({ searchTerm: term })
+                }
+                onSearch={this.handleSearch}
+              />
+              <button
+                className="error-trigger"
+                onClick={this.handleTriggerError}
+              >
+                Trigger Error
+              </button>
+              <SearchResults
+                results={results}
+                error={error}
+                isLoading={isLoading}
+              />
+              <PokemonList />
+            </div>
+          </>
+        )}
+        <ErrorPage></ErrorPage>
+      </ErrorBoundary>
     );
   }
 }
