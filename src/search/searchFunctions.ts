@@ -24,7 +24,3 @@ export const handleSearch = async (
     };
   }
 };
-
-export const triggerError = (): string => {
-  return 'This is a manually triggered error.';
-};
